@@ -44,7 +44,7 @@ btn_quit.pack(pady=20)
 frame_breakout = tk.Frame(fenetre)
 
 photo = tk.PhotoImage(
-    file=r"C:\Users\kerba\Cours_3ETI\Semestre5\DevLogicielPython\projetTP4DevLogicielPython\space.png"
+    file=r"C:\Users\thead\Documents\CPE\3A\python\TP4-breakout\projetTP4DevLogicielPython\imagespace.png"
 )
 
 canvas = tk.Canvas(frame_breakout, width=1260, height=800)
@@ -69,8 +69,8 @@ PADDLE_Y = 700
 
 BALL_SIZE = 20
 
-dx = 5
-dy = -5
+dx = 10
+dy = -10
 
 def init_game_objects():
     global paddle, ball, dx, dy
