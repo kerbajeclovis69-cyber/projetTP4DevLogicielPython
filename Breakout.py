@@ -1,6 +1,6 @@
 # Hadi Elghali et Clovis Kerbaje projet jeu Breakout
 
-#TO DO NEXT TIME : quand on restart, les rectangles disparaissent mais ne se raffiche plus / intégrer la raquette et la balle (cf code hadi) / nombre vie à gérer / vitesse de la balle selon le niveau / faire disparaitre les rectangles quand leur vie est à 0 / mettre de la musique / verifier la gagne ou la défaite / mettre un chronomètre
+#TO DO NEXT TIME : nombre vie à gérer / vitesse de la balle selon le niveau / faire disparaitre les rectangles quand leur vie est à 0 / mettre de la musique / verifier la gagne ou la défaite / mettre un chronomètre
 
 
 import tkinter as tk
@@ -40,17 +40,31 @@ def start_level(hp, lignes):
     supprimer_briques()
     creer_briques(hp, lignes)
     init_game_objects()
-    move_ball()
+    global game_running
+
+    if not game_running:
+        game_running = True
+        move_ball()
 
 
 
 # Fonction Restart
-def restartGame():
-    label_text1.config(text="nb de vies : 2")
-    label_text2.config(text="points : 0")
+def restartGame(HP, points):
+    global ball, paddle
+    canvas.delete("message_fin")
+
+
+    label_text1.config(text="nb de vies : " + str(HP))
+    label_text2.config(text="points : " + str(points))
 
     supprimer_briques()
+    canvas.delete(ball)
+    canvas.delete(paddle)
+
+    init_game_objects()
     creer_briques(niveau_hp, niveau_lignes)
+    if game_running:
+        move_ball()
 
 
 
@@ -118,6 +132,9 @@ def move_right(event):
 def move_ball():
     global dx, dy
     global briques
+    global HP
+    global points
+    global game_running
 
     canvas.move(ball, dx, dy)
 
@@ -138,33 +155,60 @@ def move_ball():
 
     # collision briques
     for brique in briques:
-
+        
         rx1, ry1, rx2, ry2 = canvas.coords(brique[3])
 
         if (bx2 >= rx1 and
             bx1 <= rx2 and
             by2 >= ry1 and
             by1 <= ry2):
-
+            
             canvas.delete(brique[3])
+            points += 1
+            label_text2.config(text="points : " + str(points))
             briques.remove(brique)
 
             dy = -dy
 
+    if len(briques) == 0:
+        victoire()
+        return
+
     # tombe en bas
     if by2 >= 800:
-        dx = 0
-        dy = 0
 
-    fenetre.after(20, move_ball)
+        HP -= 1
+        label_text1.config(text="nb de vies : " + str(HP))
+        if HP == 0:
+            defaite()
+            return
+        else :
+            restartGame(HP, points)
+            return
+    if game_running:
+        fenetre.after(20, move_ball)
 
 
+def victoire():
+    global dx, dy, game_running
+    
+    dx = 0
+    dy = 0
 
+    canvas.create_text(630,400,text="VICTOIRE !",fill="green",font=("Arial", 50, "bold"), tags="message_fin")
+    game_running = False
 
+def defaite():
+    global dx, dy, game_running
 
+    dx = 0
+    dy = 0
 
-
+    canvas.create_text(630,400, text="DEFAITE !", fill="red", font=("Arial", 50, "bold"), tags="message_fin")
+    game_running = False
 # Constantes 
+HP = 2
+
 
 HP_FACILE = 1
 HP_MOYEN = 2
@@ -178,7 +222,7 @@ points = 0
 
 briques = []
 
-
+game_running = False
 
 PADDLE_LARGEUR = 120
 PADDLE_LONGEUR = 20
@@ -244,18 +288,18 @@ canvas.create_image(0, 0, anchor="nw", image=photo)
 
 
 # Textes
-label_text1 = tk.Label(canvas, text="nb de vies : 2", font=("Arial", 20), fg="white")
+label_text1 = tk.Label(canvas, text="nb de vies : " + str(HP), font=("Arial", 20), fg="white")
 
-label_text2 = tk.Label(canvas, text="points : 0", font=("Arial", 20), fg="white")
+label_text2 = tk.Label(canvas, text="points : " + str(points), font=("Arial", 20), fg="white")
 
 canvas.create_window(50, 20, anchor="nw", window=label_text1)
 canvas.create_window(1050, 20, anchor="nw", window=label_text2)
 
 
-# Boutons
-button1 = tk.Button(canvas, text="restart", command=restartGame)
 
-button2 = tk.Button(canvas, text="quitter", command=lambda: (supprimer_briques(),show_menu_principal()))
+# Boutons
+button1 = tk.Button(canvas, text="restart", command=lambda: (globals().__setitem__("HP", 2), globals().__setitem__("points", 0),globals().__setitem__("game_running", True), restartGame(2, 0)))
+button2 = tk.Button(canvas,text="quitter",command=lambda: (supprimer_briques(),canvas.delete("message_fin"), canvas.delete(ball), canvas.delete(paddle), show_menu_principal()))
 
 canvas.create_window(1200, 600, anchor="center", window=button1)
 canvas.create_window(1200, 650, anchor="center", window=button2)
