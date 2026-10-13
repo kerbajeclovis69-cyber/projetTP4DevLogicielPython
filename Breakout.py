@@ -47,7 +47,6 @@ def start_level(hp, lignes):
         move_ball()
 
 
-
 # Fonction Restart
 def restartGame(HP, points):
     global ball, paddle
@@ -65,8 +64,6 @@ def restartGame(HP, points):
     creer_briques(niveau_hp, niveau_lignes)
     if game_running:
         move_ball()
-
-
 
 
 #fonction pour créer toutes les briques ici n = HP d'une brique et r un rapport entre le nombre de ligne et de colonne
@@ -98,8 +95,6 @@ def supprimer_briques():
 
     briques.clear()
 
-
-
 #Fonctions ball + paddle 
 def init_game_objects():
     global paddle, ball, dx, dy
@@ -119,6 +114,8 @@ def init_game_objects():
         fill="red"
     )
 
+
+#déplacement paddle
 def move_left(event):
     x1, y1, x2, y2 = canvas.coords(paddle)
     if x1 > 0:
@@ -129,6 +126,7 @@ def move_right(event):
     if x2 < 1260:
         canvas.move(paddle, 20, 0)
 
+#fonctions de déplacement de la balle
 def move_ball():
     global dx, dy
     global briques
@@ -188,7 +186,7 @@ def move_ball():
     if game_running:
         fenetre.after(20, move_ball)
 
-
+#fonctions changement d'écran en cas de victoire ou de défaite
 def victoire():
     global dx, dy, game_running
     
@@ -206,6 +204,10 @@ def defaite():
 
     canvas.create_text(630,400, text="DEFAITE !", fill="red", font=("Arial", 50, "bold"), tags="message_fin")
     game_running = False
+
+
+
+
 # Constantes 
 HP = 2
 
