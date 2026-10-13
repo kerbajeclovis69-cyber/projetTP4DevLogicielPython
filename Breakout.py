@@ -80,8 +80,8 @@ canvas.pack(fill="both", expand=True)
 canvas.create_image(0, 0, anchor="nw", image=photo)
 
 # Textes 
-label_text1 = tk.Label(canvas, text="nb de vies :", font=("Arial", 20), fg="white")
-label_text2 = tk.Label(canvas, text="points :", font=("Arial", 20), fg="white")
+label_text1 = tk.Label(canvas, text="nb de vies : 2", font=("Arial", 20), fg="white")
+label_text2 = tk.Label(canvas, text="points : 0", font=("Arial", 20), fg="white")
 
 canvas.create_window(50, 20, anchor="nw", window=label_text1)
 canvas.create_window(1050, 20, anchor="nw", window=label_text2)
