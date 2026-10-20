@@ -1,8 +1,8 @@
 # Hadi Elghali et Clovis Kerbaje projet jeu Breakout
 
-#TO DO NEXT TIME : nombre vie à gérer / vitesse de la balle selon le niveau / faire disparaitre les rectangles quand leur vie est à 0 / mettre de la musique / verifier la gagne ou la défaite / mettre un chronomètre
+#TO DO NEXT TIME : vitesse de la balle selon le niveau / mettre de la musique / verifier la gagne ou la défaite / mettre un chronomètre
 
-
+import random as rd
 import tkinter as tk
 
 fenetre = tk.Tk()
@@ -56,14 +56,29 @@ def restartGame(HP, points):
     label_text1.config(text="nb de vies : " + str(HP))
     label_text2.config(text="points : " + str(points))
 
-    supprimer_briques()
+    
     canvas.delete(ball)
     canvas.delete(paddle)
 
     init_game_objects()
-    creer_briques(niveau_hp, niveau_lignes)
     if game_running:
         move_ball()
+
+#fonctions qui recommence la partie
+def nouvellePartie():
+    global HP, points, game_running
+    if after_id:
+        fenetre.after_cancel(after_id)
+    game_running = False
+    HP = 2
+    points = 0
+
+    supprimer_briques()
+    creer_briques(niveau_hp, niveau_lignes)
+
+    restartGame(HP, points)
+    game_running = True
+    move_ball()
 
 
 #fonction pour créer toutes les briques ici n = HP d'une brique et r un rapport entre le nombre de ligne et de colonne
@@ -99,7 +114,7 @@ def supprimer_briques():
 def init_game_objects():
     global paddle, ball, dx, dy
 
-    dx = 5
+    dx = rd.choice([-6,-5,-4,4,5,6])
     dy = -5
 
     paddle = canvas.create_rectangle(
@@ -133,7 +148,10 @@ def move_ball():
     global HP
     global points
     global game_running
-
+    global after_id
+    
+    if not game_running:
+        return
     canvas.move(ball, dx, dy)
 
     bx1, by1, bx2, by2 = canvas.coords(ball)
@@ -160,13 +178,39 @@ def move_ball():
             bx1 <= rx2 and
             by2 >= ry1 and
             by1 <= ry2):
+
+            canvas.move(ball, -dx, -dy)
             
-            canvas.delete(brique[3])
+            overlap_x = min(bx2, rx2) - max(bx1, rx1)
+            overlap_y = min(by2, ry2) - max(by1, ry1)
+            if overlap_x < overlap_y :
+                dx=-dx
+            else:
+                dy = -dy
+            
+            
             points += 1
             label_text2.config(text="points : " + str(points))
-            briques.remove(brique)
 
-            dy = -dy
+
+
+            brique[2] -= 1
+            
+            if brique[2] == 3:  
+                canvas.itemconfig(brique[3], fill="red")
+            
+            if brique[2] == 2:
+                canvas.itemconfig(brique[3], fill="orange")
+            
+            elif brique[2] == 1:
+                canvas.itemconfig(brique[3], fill="yellow")
+            if brique[2] <= 0:
+            
+                canvas.delete(brique[3])
+                briques.remove(brique)
+
+
+            break
 
     if len(briques) == 0:
         victoire()
@@ -183,8 +227,10 @@ def move_ball():
         else :
             restartGame(HP, points)
             return
+    
+
     if game_running:
-        fenetre.after(20, move_ball)
+        after_id = fenetre.after(20, move_ball)
 
 #fonctions changement d'écran en cas de victoire ou de défaite
 def victoire():
@@ -211,6 +257,7 @@ def defaite():
 # Constantes 
 HP = 2
 
+after_id = None
 
 HP_FACILE = 1
 HP_MOYEN = 2
@@ -232,14 +279,10 @@ PADDLE_Y = 700
 
 BALL_SIZE = 20
 
-dx = 10
-dy = -10
+dx = 20
+dy = -20
 paddle = None
 ball = None
-
-
-
-
 
 
 #
@@ -270,6 +313,7 @@ btn_difficile.pack(pady=10)
 btn_quit = tk.Button(frame_menu_principal, text="Quitter", font=("Arial", 25), command=fenetre.destroy)
 btn_quit.pack(pady=20)
 
+
 #
 # 
 #
@@ -281,7 +325,7 @@ btn_quit.pack(pady=20)
 
 frame_breakout = tk.Frame(fenetre)
 
-photo = tk.PhotoImage(file=r"C:\Users\kerba\Cours_3ETI\Semestre5\DevLogicielPython\projetTP4DevLogicielPython\space.png")
+photo = tk.PhotoImage(file=r"C:\Users\kerba\Cours_3ETI\Semestre5\DevLogicielPython\TP4DevLogicielPython_projet\space.png")
 
 canvas = tk.Canvas(frame_breakout, width=1260, height=800)
 canvas.pack(fill="both", expand=True)
@@ -290,9 +334,9 @@ canvas.create_image(0, 0, anchor="nw", image=photo)
 
 
 # Textes
-label_text1 = tk.Label(canvas, text="nb de vies : " + str(HP), font=("Arial", 20), fg="white")
+label_text1 = tk.Label(canvas, text="nb de vies : " + str(HP), font=("Arial", 20), fg="white", bg="black")
 
-label_text2 = tk.Label(canvas, text="points : " + str(points), font=("Arial", 20), fg="white")
+label_text2 = tk.Label(canvas, text="points : " + str(points), font=("Arial", 20), fg="white", bg="black")
 
 canvas.create_window(50, 20, anchor="nw", window=label_text1)
 canvas.create_window(1050, 20, anchor="nw", window=label_text2)
@@ -300,8 +344,11 @@ canvas.create_window(1050, 20, anchor="nw", window=label_text2)
 
 
 # Boutons
-button1 = tk.Button(canvas, text="restart", command=lambda: (globals().__setitem__("HP", 2), globals().__setitem__("points", 0),globals().__setitem__("game_running", True), restartGame(2, 0)))
-button2 = tk.Button(canvas,text="quitter",command=lambda: (supprimer_briques(),canvas.delete("message_fin"), canvas.delete(ball), canvas.delete(paddle), show_menu_principal()))
+button1 = tk.Button(canvas, text="restart", command=nouvellePartie)
+button2 = tk.Button(
+    canvas,
+    text="quitter",
+    command=lambda: (globals().__setitem__("HP", 2),globals().__setitem__("points", 0),globals().__setitem__("game_running", False),label_text1.config(text="nb de vies : 2"),label_text2.config(text="points : 0"),supprimer_briques(),canvas.delete("message_fin"),canvas.delete(ball),canvas.delete(paddle),show_menu_principal()))
 
 canvas.create_window(1200, 600, anchor="center", window=button1)
 canvas.create_window(1200, 650, anchor="center", window=button2)
