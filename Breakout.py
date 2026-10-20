@@ -1,6 +1,6 @@
 # Hadi Elghali et Clovis Kerbaje projet jeu Breakout
 
-#TO DO NEXT TIME : vitesse de la balle selon le niveau / mettre de la musique / verifier la gagne ou la défaite / mettre un chronomètre
+#TO DO NEXT TIME : vitesse de la balle selon le niveau / mettre de la musique / mettre un chronomètre
 
 import random as rd
 import tkinter as tk
@@ -117,17 +117,9 @@ def init_game_objects():
     dx = rd.choice([-6,-5,-4,4,5,6])
     dy = -5
 
-    paddle = canvas.create_rectangle(
-        630 - PADDLE_LARGEUR//2, PADDLE_Y,
-        630 + PADDLE_LARGEUR//2, PADDLE_Y + PADDLE_LONGEUR,
-        fill="white"
-    )
+    paddle = canvas.create_rectangle(630 - PADDLE_LARGEUR//2, PADDLE_Y,630 + PADDLE_LARGEUR//2, PADDLE_Y + PADDLE_LONGEUR,fill="white")
 
-    ball = canvas.create_oval(
-        630 - BALL_SIZE//2, 400 - BALL_SIZE//2,
-        630 + BALL_SIZE//2, 400 + BALL_SIZE//2,
-        fill="red"
-    )
+    ball = canvas.create_oval(630 - BALL_SIZE//2, 400 - BALL_SIZE//2,630 + BALL_SIZE//2, 400 + BALL_SIZE//2,fill="red")
 
 
 #déplacement paddle
@@ -325,7 +317,9 @@ btn_quit.pack(pady=20)
 
 frame_breakout = tk.Frame(fenetre)
 
+
 photo = tk.PhotoImage(file=r"C:\Users\kerba\Cours_3ETI\Semestre5\DevLogicielPython\TP4DevLogicielPython_projet\space.png")
+
 
 canvas = tk.Canvas(frame_breakout, width=1260, height=800)
 canvas.pack(fill="both", expand=True)
@@ -345,10 +339,7 @@ canvas.create_window(1050, 20, anchor="nw", window=label_text2)
 
 # Boutons
 button1 = tk.Button(canvas, text="restart", command=nouvellePartie)
-button2 = tk.Button(
-    canvas,
-    text="quitter",
-    command=lambda: (globals().__setitem__("HP", 2),globals().__setitem__("points", 0),globals().__setitem__("game_running", False),label_text1.config(text="nb de vies : 2"),label_text2.config(text="points : 0"),supprimer_briques(),canvas.delete("message_fin"),canvas.delete(ball),canvas.delete(paddle),show_menu_principal()))
+button2 = tk.Button(canvas,text="quitter",command=lambda: (globals().__setitem__("HP", 2),globals().__setitem__("points", 0),globals().__setitem__("game_running", False),label_text1.config(text="nb de vies : 2"),label_text2.config(text="points : 0"),supprimer_briques(),canvas.delete("message_fin"),canvas.delete(ball),canvas.delete(paddle),show_menu_principal()))
 
 canvas.create_window(1200, 600, anchor="center", window=button1)
 canvas.create_window(1200, 650, anchor="center", window=button2)
@@ -356,7 +347,7 @@ canvas.create_window(1200, 650, anchor="center", window=button2)
 
 
 
-# --- PADDLE + BALL ---
+# PADDLE + BALL 
 
 fenetre.bind("<Left>", move_left)
 fenetre.bind("<Right>", move_right)
