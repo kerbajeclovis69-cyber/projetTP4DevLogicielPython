@@ -88,7 +88,7 @@ btn_quit.pack(pady=20)
 frame_breakout = tk.Frame(fenetre)
 
 
-photo = tk.PhotoImage(file=r"C:\Users\kerba\Cours_3ETI\Semestre5\DevLogicielPython\TP4DevLogicielPython_projet\space.png")
+photo = tk.PhotoImage(file=r"C:\Users\thead\Documents\CPE\3A\python\TP4-breakout\projetTP4DevLogicielPython\space123.png")
 
 
 canvas = tk.Canvas(frame_breakout, width=1260, height=800)
