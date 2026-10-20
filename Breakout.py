@@ -29,7 +29,8 @@ HP_DIFFICILE = 4
 LIGNES_FACILE = 5
 LIGNES_MOYEN = 10
 LIGNES_DIFFICILE = 15
-
+ACCELERATION = 1.02
+VITESSE_MAX = 15
 points = 0
 
 briques = []
@@ -87,7 +88,7 @@ btn_quit.pack(pady=20)
 frame_breakout = tk.Frame(fenetre)
 
 
-photo = tk.PhotoImage(file=r"C:\Users\kerba\Cours_3ETI\Semestre5\DevLogicielPython\TP4DevLogicielPython_projet\space.png")
+photo = tk.PhotoImage(file=r"C:\Users\thead\Documents\CPE\3A\python\TP4-breakout\projetTP4DevLogicielPython\space123.png")
 
 
 canvas = tk.Canvas(frame_breakout, width=1260, height=800)
@@ -144,8 +145,8 @@ bf.paddle = paddle
 
 bf.niveau_hp = niveau_hp
 bf.niveau_lignes = niveau_lignes
-
-
+bf.ACCELERATION= ACCELERATION
+bf.VITESSE_MAX = VITESSE_MAX
 
 
 # PADDLE + BALL 
