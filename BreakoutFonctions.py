@@ -201,18 +201,21 @@ def move_ball():
 
     bx1, by1, bx2, by2 = canvas.coords(ball.id)
     px1, py1, px2, py2 = canvas.coords(paddle.id)
+    
 
     # collision murs
     if bx1 <= 0 or bx2 >= 1260:
         ball.dx = -ball.dx
     if by1 <= 0:
-        ball.dy = -ball.dy
+        ball.dy = -ball.dy 
 
     # collision paddle
     if ball.dy > 0:
         if by2 >= py1 and by1 <= py2:
             if bx2 >= px1 and bx1 <= px2:
+
                 ball.dy = -ball.dy - rd.choice([-0.3,-0.6,-0.9,0.3,0.6,0.9])
+
                 ball.dx *= ACCELERATION
                 ball.dy *= ACCELERATION
                 ball.dx = max(-VITESSE_MAX, min(ball.dx, VITESSE_MAX)) 
@@ -220,19 +223,18 @@ def move_ball():
 
     # collision briques
     for brique in briques:
-        
         rx1, ry1, rx2, ry2 = canvas.coords(brique.id)
-
         if (bx2 >= rx1 and
             bx1 <= rx2 and
             by2 >= ry1 and
             by1 <= ry2):
 
-            canvas.move(ball, -ball.dx, -ball.dy)
+            canvas.move(ball.id, -ball.dx, -ball.dy)
             
             overlap_x = min(bx2, rx2) - max(bx1, rx1)
             overlap_y = min(by2, ry2) - max(by1, ry1)
             if overlap_x < overlap_y :
+
                 ball.dx=-ball.dx 
                 ball.dx *= ACCELERATION
                 ball.dy *= ACCELERATION
@@ -240,6 +242,7 @@ def move_ball():
                 ball.dy = max(-VITESSE_MAX, min(ball.dy, VITESSE_MAX)) 
             else:
                 ball.dy = -ball.dy 
+
                 ball.dx *= ACCELERATION
                 ball.dy *= ACCELERATION
                 ball.dx = max(-VITESSE_MAX, min(ball.dx, VITESSE_MAX)) 
