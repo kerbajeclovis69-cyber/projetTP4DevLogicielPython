@@ -3,6 +3,61 @@ import tkinter as tk
 
 
 
+class Brique:
+    def __init__(self, x, y, hp, largeur, hauteur):
+        self.hp = hp
+
+        self.id = canvas.create_rectangle(
+            x,
+            y,
+            x + largeur,
+            y + hauteur,
+            fill="blue",
+            outline="white"
+        )
+
+
+class Paddle:
+    def __init__(self):
+        self.id = canvas.create_rectangle(
+            630 - PADDLE_LARGEUR // 2,
+            PADDLE_Y,
+            630 + PADDLE_LARGEUR // 2,
+            PADDLE_Y + PADDLE_LONGEUR,
+            fill="white"
+        )
+
+    def move_left(self):
+
+        x1, y1, x2, y2 = canvas.coords(self.id)
+
+        if x1 > 0:
+            canvas.move(self.id, -20, 0)
+
+    def move_right(self):
+
+        x1, y1, x2, y2 = canvas.coords(self.id)
+
+        if x2 < 1260:
+            canvas.move(self.id, 20, 0)
+
+
+class Balle:
+    def __init__(self):
+
+        self.dx = rd.choice([-6, -5, -4, 4, 5, 6])
+        self.dy = -5
+
+        self.id = canvas.create_oval(
+            630 - BALL_SIZE // 2,
+            400 - BALL_SIZE // 2,
+            630 + BALL_SIZE // 2,
+            400 + BALL_SIZE // 2,
+            fill="red"
+        )
+
+
+
 # Fonctions changement de menu
 def show_menu_principal():
     frame_menu_principal.pack(fill="both", expand=True)
@@ -43,12 +98,11 @@ def restartGame(HP, points):
     label_text2.config(text="points : " + str(points))
 
     
-    canvas.delete(ball)
-    canvas.delete(paddle)
+    canvas.delete(ball.id)
+    canvas.delete(paddle.id)
 
     init_game_objects()
-    if game_running:
-        move_ball()
+
 
 #fonctions qui recommence la partie
 def nouvellePartie():
@@ -66,62 +120,82 @@ def nouvellePartie():
     game_running = True
     move_ball()
 
+def quitter_partie():
+
+    global HP, points, game_running, ball, paddle, after_id
+
+    HP = 2
+    points = 0
+
+    label_text1.config(text="nb de vies : 2")
+    label_text2.config(text="points : 0")
+
+    if after_id:
+        fenetre.after_cancel(after_id)
+        after_id = None
+
+    game_running = False
+
+    supprimer_briques()
+
+    if ball:
+        canvas.delete(ball.id)
+
+    if paddle:
+        canvas.delete(paddle.id)
+
+    ball = None
+    paddle = None
+
+    canvas.delete("message_fin")
+
+    show_menu_principal()
+
+
 
 #fonction pour créer toutes les briques ici n = HP d'une brique et r un rapport entre le nombre de ligne et de colonne
 def creer_briques(n, r):
+
     largeur = 900 / (2 * r)
     hauteur = 15
 
     for ligne in range(r):
+
         for col in range(2 * r):
 
             x = 180 + col * largeur
             y = 100 + ligne * hauteur
 
-            id_rect = canvas.create_rectangle(
-                x,
-                y,
-                x + largeur,
-                y + hauteur,
-                fill="blue",
-                outline="white"
-            )
+            briques.append(Brique(x, y, n, largeur, hauteur))
 
-            briques.append([x, y, n, id_rect])
 
 #fonction pour retirer toutes les briques de l'écran
 def supprimer_briques():
+
     for brique in briques:
-        canvas.delete(brique[3])
+        canvas.delete(brique.id)
 
     briques.clear()
 
 #Fonctions ball + paddle 
 def init_game_objects():
-    global paddle, ball, dx, dy
 
-    dx = rd.choice([-6,-5,-4,4,5,6])
-    dy = -5
+    global paddle
+    global ball
 
-    paddle = canvas.create_rectangle(630 - PADDLE_LARGEUR//2, PADDLE_Y,630 + PADDLE_LARGEUR//2, PADDLE_Y + PADDLE_LONGEUR,fill="white")
-
-    ball = canvas.create_oval(630 - BALL_SIZE//2, 400 - BALL_SIZE//2,630 + BALL_SIZE//2, 400 + BALL_SIZE//2,fill="red")
-
+    paddle = Paddle()
+    ball = Balle()
 
 #déplacement paddle
 def move_left(event):
-    x1, y1, x2, y2 = canvas.coords(paddle)
-    if x1 > 0:
-        canvas.move(paddle, -20, 0)
+    paddle.move_left()
 
 def move_right(event):
-    x1, y1, x2, y2 = canvas.coords(paddle)
-    if x2 < 1260:
-        canvas.move(paddle, 20, 0)
+    paddle.move_right()
 
 #fonctions de déplacement de la balle
 def move_ball():
-    global dx, dy
+    global ball
     global briques
     global HP
     global points
@@ -130,41 +204,41 @@ def move_ball():
     
     if not game_running:
         return
-    canvas.move(ball, dx, dy)
+    canvas.move(ball.id, ball.dx, ball.dy)
 
-    bx1, by1, bx2, by2 = canvas.coords(ball)
-    px1, py1, px2, py2 = canvas.coords(paddle)
+    bx1, by1, bx2, by2 = canvas.coords(ball.id)
+    px1, py1, px2, py2 = canvas.coords(paddle.id)
 
     # murs
     if bx1 <= 0 or bx2 >= 1260:
-        dx = -dx
+        ball.dx = -ball.dx
     if by1 <= 0:
-        dy = -dy
+        ball.dy = -ball.dy
 
     # collision paddle
-    if dy > 0:
+    if ball.dy > 0:
         if by2 >= py1 and by1 <= py2:
             if bx2 >= px1 and bx1 <= px2:
-                dy = -dy
+                ball.dy = -ball.dy
 
     # collision briques
     for brique in briques:
         
-        rx1, ry1, rx2, ry2 = canvas.coords(brique[3])
+        rx1, ry1, rx2, ry2 = canvas.coords(brique.id)
 
         if (bx2 >= rx1 and
             bx1 <= rx2 and
             by2 >= ry1 and
             by1 <= ry2):
 
-            canvas.move(ball, -dx, -dy)
+            canvas.move(ball, -ball.dx, -ball.dy)
             
             overlap_x = min(bx2, rx2) - max(bx1, rx1)
             overlap_y = min(by2, ry2) - max(by1, ry1)
             if overlap_x < overlap_y :
-                dx=-dx
+                ball.dx=-ball.dx
             else:
-                dy = -dy
+                ball.dy = -ball.dy
             
             
             points += 1
@@ -172,19 +246,19 @@ def move_ball():
 
 
 
-            brique[2] -= 1
+            brique.hp -= 1
             
-            if brique[2] == 3:  
-                canvas.itemconfig(brique[3], fill="red")
+            if brique.hp == 3:  
+                canvas.itemconfig(brique.id, fill="red")
             
-            if brique[2] == 2:
-                canvas.itemconfig(brique[3], fill="orange")
+            if brique.hp == 2:
+                canvas.itemconfig(brique.id, fill="orange")
             
-            elif brique[2] == 1:
-                canvas.itemconfig(brique[3], fill="yellow")
-            if brique[2] <= 0:
+            elif brique.hp == 1:
+                canvas.itemconfig(brique.id, fill="yellow")
+            if brique.hp <= 0:
             
-                canvas.delete(brique[3])
+                canvas.delete(brique.id)
                 briques.remove(brique)
 
 
@@ -202,9 +276,11 @@ def move_ball():
         if HP == 0:
             defaite()
             return
-        else :
-            restartGame(HP, points)
-            return
+        restartGame(HP, points)
+
+        after_id = fenetre.after(20, move_ball)
+
+        return
     
 
     if game_running:
@@ -212,20 +288,19 @@ def move_ball():
 
 #fonctions changement d'écran en cas de victoire ou de défaite
 def victoire():
-    global dx, dy, game_running
+    global ball, game_running
     
-    dx = 0
-    dy = 0
+    ball.dx = 0
+    ball.dy = 0
 
     canvas.create_text(630,400,text="VICTOIRE !",fill="green",font=("Arial", 50, "bold"), tags="message_fin")
     game_running = False
 
 def defaite():
-    global dx, dy, game_running
+    global ball, game_running
 
-    dx = 0
-    dy = 0
+    ball.dx = 0
+    ball.dy = 0
 
     canvas.create_text(630,400, text="DEFAITE !", fill="red", font=("Arial", 50, "bold"), tags="message_fin")
     game_running = False
-

@@ -42,8 +42,7 @@ PADDLE_Y = 700
 
 BALL_SIZE = 20
 
-dx = 20
-dy = -20
+
 paddle = None
 ball = None
 
@@ -88,7 +87,7 @@ btn_quit.pack(pady=20)
 frame_breakout = tk.Frame(fenetre)
 
 
-photo = tk.PhotoImage(file=r"C:\Users\thead\Documents\CPE\3A\python\TP4-breakout\projetTP4DevLogicielPython\space123.png")
+photo = tk.PhotoImage(file=r"C:\Users\kerba\Cours_3ETI\Semestre5\DevLogicielPython\TP4DevLogicielPython_projet\space.png")
 
 
 canvas = tk.Canvas(frame_breakout, width=1260, height=800)
@@ -109,8 +108,7 @@ canvas.create_window(1050, 20, anchor="nw", window=label_text2)
 
 # Boutons
 button1 = tk.Button(canvas, text="restart", command= bf.nouvellePartie)
-button2 = tk.Button(canvas,text="quitter",command=lambda: (label_text1.config(text="nb de vies : 2"),label_text2.config(text="points : 0"),bf.supprimer_briques(),canvas.delete("message_fin"),bf.show_menu_principal()))
-
+button2 = tk.Button(canvas, text="quitter", command=bf.quitter_partie)
 canvas.create_window(1200, 600, anchor="center", window=button1)
 canvas.create_window(1200, 650, anchor="center", window=button2)
 
