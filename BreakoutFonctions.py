@@ -7,14 +7,7 @@ class Brique:
     def __init__(self, x, y, hp, largeur, hauteur):
         self.hp = hp
 
-        self.id = canvas.create_rectangle(
-            x,
-            y,
-            x + largeur,
-            y + hauteur,
-            fill="blue",
-            outline="white"
-        )
+        self.id = canvas.create_rectangle(x,y,x + largeur,y + hauteur,fill="purple",outline="white")
 
 
 class Paddle:
@@ -156,15 +149,15 @@ def quitter_partie():
 #fonction pour créer toutes les briques ici n = HP d'une brique et r un rapport entre le nombre de ligne et de colonne
 def creer_briques(n, r):
 
-    largeur = 900 / (2 * r)
+    largeur = 900 / ((2 * r))
     hauteur = 15
 
     for ligne in range(r):
 
         for col in range(2 * r):
 
-            x = 180 + col * largeur
-            y = 100 + ligne * hauteur
+            x = 150 + col * (largeur + 2)
+            y = 100 + ligne * (hauteur + 2)
 
             briques.append(Brique(x, y, n, largeur, hauteur))
 
@@ -209,7 +202,7 @@ def move_ball():
     bx1, by1, bx2, by2 = canvas.coords(ball.id)
     px1, py1, px2, py2 = canvas.coords(paddle.id)
 
-    # murs
+    # collision murs
     if bx1 <= 0 or bx2 >= 1260:
         ball.dx = -ball.dx
     if by1 <= 0:
@@ -219,7 +212,11 @@ def move_ball():
     if ball.dy > 0:
         if by2 >= py1 and by1 <= py2:
             if bx2 >= px1 and bx1 <= px2:
-                ball.dy = -ball.dy
+                ball.dy = -ball.dy - rd.choice([-0.3,-0.6,-0.9,0.3,0.6,0.9])
+                ball.dx *= ACCELERATION
+                ball.dy *= ACCELERATION
+                ball.dx = max(-VITESSE_MAX, min(ball.dx, VITESSE_MAX)) 
+                ball.dy = max(-VITESSE_MAX, min(ball.dy, VITESSE_MAX)) 
 
     # collision briques
     for brique in briques:
@@ -236,9 +233,17 @@ def move_ball():
             overlap_x = min(bx2, rx2) - max(bx1, rx1)
             overlap_y = min(by2, ry2) - max(by1, ry1)
             if overlap_x < overlap_y :
-                ball.dx=-ball.dx
+                ball.dx=-ball.dx 
+                ball.dx *= ACCELERATION
+                ball.dy *= ACCELERATION
+                ball.dx = max(-VITESSE_MAX, min(ball.dx, VITESSE_MAX)) 
+                ball.dy = max(-VITESSE_MAX, min(ball.dy, VITESSE_MAX)) 
             else:
-                ball.dy = -ball.dy
+                ball.dy = -ball.dy 
+                ball.dx *= ACCELERATION
+                ball.dy *= ACCELERATION
+                ball.dx = max(-VITESSE_MAX, min(ball.dx, VITESSE_MAX)) 
+                ball.dy = max(-VITESSE_MAX, min(ball.dy, VITESSE_MAX)) 
             
             
             points += 1
@@ -252,10 +257,10 @@ def move_ball():
                 canvas.itemconfig(brique.id, fill="red")
             
             if brique.hp == 2:
-                canvas.itemconfig(brique.id, fill="orange")
+                canvas.itemconfig(brique.id, fill="yellow")
             
             elif brique.hp == 1:
-                canvas.itemconfig(brique.id, fill="yellow")
+                canvas.itemconfig(brique.id, fill="green")
             if brique.hp <= 0:
             
                 canvas.delete(brique.id)

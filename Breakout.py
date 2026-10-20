@@ -1,6 +1,6 @@
 # Hadi Elghali et Clovis Kerbaje projet jeu Breakout
 
-#TO DO NEXT TIME : vitesse de la balle selon le niveau / mettre de la musique / mettre un chronomètre
+#TO DO NEXT TIME : vitesse de la balle selon le niveau / mettre de la musique / mettre un chronomètre / rajouter des bonus / 
 
 import random as rd
 import tkinter as tk
@@ -27,8 +27,8 @@ HP_MOYEN = 2
 HP_DIFFICILE = 4
 
 LIGNES_FACILE = 5
-LIGNES_MOYEN = 10
-LIGNES_DIFFICILE = 15
+LIGNES_MOYEN = 8
+LIGNES_DIFFICILE = 11
 
 points = 0
 
@@ -41,7 +41,8 @@ PADDLE_LONGEUR = 20
 PADDLE_Y = 700
 
 BALL_SIZE = 20
-
+acceleration = 1.02
+Vmax = 13
 
 paddle = None
 ball = None
@@ -87,7 +88,7 @@ btn_quit.pack(pady=20)
 frame_breakout = tk.Frame(fenetre)
 
 
-photo = tk.PhotoImage(file=r"C:\Users\kerba\Cours_3ETI\Semestre5\DevLogicielPython\TP4DevLogicielPython_projet\space.png")
+photo = tk.PhotoImage(file=r"C:\Users\kerba\Cours_3ETI\Semestre5\DevLogicielPython\TP4DevLogicielPython_projet\space123.png")
 
 
 canvas = tk.Canvas(frame_breakout, width=1260, height=800)
@@ -144,7 +145,8 @@ bf.paddle = paddle
 
 bf.niveau_hp = niveau_hp
 bf.niveau_lignes = niveau_lignes
-
+bf.ACCELERATION = acceleration
+bf.VITESSE_MAX = Vmax
 
 
 
