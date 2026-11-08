@@ -7,7 +7,7 @@ import tkinter as tk
 import BreakoutFonctions as bf
 
 fenetre = tk.Tk()
-fenetre.title("Break the fuck out")
+fenetre.title("Break the f*ck out")
 fenetre.geometry("1260x800")
 
 
@@ -90,7 +90,7 @@ frame_breakout = tk.Frame(fenetre)
 
 
 
-photo = tk.PhotoImage(file=r"C:\Users\kerba\Cours_3ETI\Semestre5\DevLogicielPython\TP4DevLogicielPython_projet\space123.png")
+photo = tk.PhotoImage(file=r"C:\Users\thead\Documents\CPE\3A\python\TP4-breakout\projetTP4DevLogicielPython\space123.png")
 
 
 
